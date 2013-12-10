@@ -160,7 +160,11 @@ function printHeader($page = BASE_PAGE){
 	global $msg;
     $message = $msg ? "<div class=\"msg\">$msg</div>" : '';
 	$html_title = "$page | " . PAGE_TITLE;
-
+	$mod = 'not yet.';
+	$toc = $bl = '';
+	if(pageExists($page)){
+		$mod = date('d.m.Y, H:i:s', filemtime(getFilePath($page)));
+	}
 	echo <<<PAGE_HEAD
 <!DOCTYPE html>
 <html>
@@ -174,6 +178,8 @@ function printHeader($page = BASE_PAGE){
     <div id="main">
 	$message
 	<h1>$page</h1>
+	<p class="modified">Last modified: <em>$mod</em></p>
+	<hr>
     <div id="content">
 PAGE_HEAD;
 }
@@ -211,10 +217,8 @@ PAGE_FOOT;
 function getSidebar($page = BASE_PAGE){
 	$title = PAGE_TITLE;
 	$id = titleToId($page);
-	$mod = 'not yet.';
 	$toc = $bl = '';
 	if(pageExists($page)){
-		$mod = date('d.m.Y, H:i:s', filemtime(getFilePath($page)));
 		$toc = generateToc();
 		$bl = "<li class=\"backlinks\"><a href=\"./?backlinks=$id\">Backlinks</a></li>";
 	}
@@ -225,7 +229,6 @@ function getSidebar($page = BASE_PAGE){
 <ul class="sidebar-list">
   <li class="edit-link"><a href="./?edit=$id">Edit page</a></li>
   $bl
-  <li class="modified">Last modified: <em>$mod</em></li>
   <li class="create-new-link"><a href="./?edit=">Create new page</a></li>
   <li class="recent-changes-link"><a href="./?recent=10">Recent changes</a></li>
 </ul>
@@ -271,15 +274,15 @@ function printEdit($page){
 	echo <<<EDIT_FORM
 <form action="./?edit=$id" method="post" id="edit-form">
   <p id="edit-block-title" class="edit-block">
-    <label for="edit-title">Page:</label>
     <label for="edit-title">Posting Password <small style="float:right;">Without it, you can’t post.</small></label>
     <input type="text" id="edit-title" name="postpass" value="$postpass">
   </p>
   <p id="edit-block-title" class="edit-block">
+    <label for="edit-title">Page</label>
     <input type="text" id="edit-title" name="title" value="$title">
   </p>
   <div id="edit-block-content" class="edit-block">
-    <label for="edit-content">Content:</label>
+    <label for="edit-content">Content</label>
     <textarea name="content" id="edit-content" rows="15" cols="80">$content</textarea>
   </div>
   <p id="edit-block-submit" class="edit-block">
