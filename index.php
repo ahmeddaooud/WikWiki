@@ -10,6 +10,7 @@
 define('PAGE_TITLE', 'WikWiki');
 define('BASE_PAGE', 'Home Page');
 define('FOOTER_TEXT', 'Copyright %Y Martin Šrank. | Powered by <a href="http://smasty.net/wikwiki">WikWiki</a>.');
+define('POST_PASS', ''); // Password for posting
 
 @set_magic_quotes_runtime(false);
 
@@ -42,6 +43,7 @@ if(empty($_GET)){
 
 // Save content.
 if(!empty($_POST)){
+	if($_POST['postpass']!=POST_PASS) die("Invalid Password.");
 	if(!savePageContent($_POST)){
 		$msg = 'Edit failed. Please, try again.';
 	}
@@ -270,6 +272,10 @@ function printEdit($page){
 <form action="./?edit=$id" method="post" id="edit-form">
   <p id="edit-block-title" class="edit-block">
     <label for="edit-title">Page:</label>
+    <label for="edit-title">Posting Password <small style="float:right;">Without it, you can’t post.</small></label>
+    <input type="text" id="edit-title" name="postpass" value="$postpass">
+  </p>
+  <p id="edit-block-title" class="edit-block">
     <input type="text" id="edit-title" name="title" value="$title">
   </p>
   <div id="edit-block-content" class="edit-block">
